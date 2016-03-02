@@ -5,9 +5,12 @@ namespace Zonk\Operations;
 use Psr\Log\LoggerInterface;
 use Zonk\Configuration;
 use Zonk\Database\CapsuleProvider;
+use Zonk\Database\Common\ShowTablesTrait;
 
 class Information implements OperationInterface
 {
+    use ShowTablesTrait;
+
     /** @var CapsuleProvider */
     protected $capsuleProvider;
 
@@ -39,10 +42,8 @@ class Information implements OperationInterface
     public function doOperation(Configuration $configuration)
     {
         $database = $configuration->getConfigKey('database');
-        $capsule = $this->capsuleProvider->getCapsule();
-        $connection = $capsule->getConnection();
 
-        $tables = $connection->select('SHOW TABLES');
+        $tables = $this->getShowTables($this->capsuleProvider);
 
         $this->logger->warning(sprintf('Zonk Performing Opertations on %s', $database['database']));
         $this->logger->info(sprintf('Number of tables: %d', count($tables)));

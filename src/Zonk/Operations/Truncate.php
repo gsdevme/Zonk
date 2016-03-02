@@ -6,10 +6,12 @@ use Psr\Log\LoggerInterface;
 use Zonk\Configuration;
 use Zonk\Database\CapsuleProvider;
 use Zonk\Database\Common\DisabledForeignKeyConstraintsTrait;
+use Zonk\Database\Common\ShowTablesTrait;
 
 class Truncate implements OperationInterface
 {
     use DisabledForeignKeyConstraintsTrait;
+    use ShowTablesTrait;
 
     /** @var CapsuleProvider */
     protected $capsuleProvider;
@@ -49,7 +51,7 @@ class Truncate implements OperationInterface
             return true;
         }
 
-        $tables = $connection->select('SHOW TABLES');
+        $tables = $this->getShowTables($this->capsuleProvider);
 
         $this->doDisabledForeignKeyConstraints(
             $this->capsuleProvider,
@@ -90,10 +92,7 @@ class Truncate implements OperationInterface
 
             $wildcardTable = substr($table, 0, $offset);
 
-            foreach ($tables as $table) {
-                $table = array_values((array)$table);
-                $tableName = array_shift($table);
-
+            foreach ($tables as $tableName) {
                 if (strstr($tableName, $wildcardTable) !== false) {
                     $this->truncateTable(strstr($tableName, $wildcardTable));
                 }
