@@ -4,7 +4,8 @@
         "symfony/console": "^3.0",
         "symfony/yaml": "^3.0",
         "illuminate/database": "^5.2",
-        "monolog/monolog": "^1.18"
+        "monolog/monolog": "^1.18",
+        "fzaninotto/faker": "^1.5"
     },
     "autoload": {
         "psr-0": {

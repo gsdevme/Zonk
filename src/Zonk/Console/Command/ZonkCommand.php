@@ -12,6 +12,7 @@ use Zonk\Database\CapsuleBuilder;
 use Zonk\Database\CapsuleProvider;
 use Zonk\Monolog\OutputHandler;
 use Zonk\Operations\Information;
+use Zonk\Operations\Obfuscate;
 use Zonk\Operations\OperationInterface;
 use Zonk\Operations\Truncate;
 use Zonk\YmlConfigurationFactory;
@@ -59,6 +60,7 @@ class ZonkCommand extends Command
         $operations = [
             new Information($capsuleProvider, $logger),
             new Truncate($capsuleProvider, $logger),
+           // new Obfuscate($capsuleProvider, $logger),
         ];
 
         /** @var OperationInterface $operation */
