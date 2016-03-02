@@ -11,6 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Zonk\Database\CapsuleBuilder;
 use Zonk\Database\CapsuleProvider;
 use Zonk\Monolog\OutputHandler;
+use Zonk\Operations\Information;
 use Zonk\Operations\OperationInterface;
 use Zonk\Operations\Truncate;
 use Zonk\YmlConfigurationFactory;
@@ -45,6 +46,8 @@ class ZonkCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->doBanner($output);
+
         $ymlConfigurationFactory = new YmlConfigurationFactory();
         $configuration = $ymlConfigurationFactory->createFromYml($input->getOption('config-file'));
 
@@ -86,5 +89,23 @@ class ZonkCommand extends Command
         $this->logger = $logger;
 
         return $this->logger;
+    }
+
+    /**
+     * @param OutputInterface $output
+     */
+    private function doBanner(OutputInterface $output)
+    {
+        $version = $this->getApplication()->getVersion();
+
+        $banner = <<<BANNER
+========================
+Zonk! - Version: $version
+=========================
+
+BANNER;
+
+        $output->write('<info>' . $banner. '</info>');
+
     }
 }

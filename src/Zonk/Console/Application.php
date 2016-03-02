@@ -10,6 +10,16 @@ use Zonk\Console\Command\ZonkCommand;
 class Application extends SymfonyApplication
 {
     /**
+     * Application constructor.
+     *
+     * @param string $version
+     */
+    public function __construct($version)
+    {
+        parent::__construct('Zonk', $version);
+    }
+
+    /**
      * @inheritdoc
      */
     protected function getCommandName(InputInterface $input)
