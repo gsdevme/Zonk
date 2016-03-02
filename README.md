@@ -30,6 +30,19 @@ operations: ~
 ## Operations
 Zonk has multiple operations it can perform, none are required by default.
 
+### Obfuscate
+Obfuscate
+
+``` yml
+  obfuscate:
+    strategies:
+      email: Zonk\Obfuscation\Strategies\EmailAddress
+    tables:
+      customer:
+        username: email
+        email: email
+```
+
 ### Truncate
 Truncate will do as suggested and truncate the table to zero length, this operation makes use of `DisabledForeignKeyConstraintsTrait` to disable foreign keys to prevent errors when truncating. Its upto the end user to ensure all constraints are resolved.
 
