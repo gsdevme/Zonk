@@ -2,13 +2,13 @@
 
 namespace Zonk\Obfuscation\Strategies;
 
-class EmailAddress implements StrategyInterface
+class LastName extends FakerAwareStrategy
 {
     /**
      * @inheritdoc
      */
     public function obfuscate($value = null)
     {
-        return sprintf('%s@example.com', hash('sha256', $value));
+        return md5($value);
     }
 }

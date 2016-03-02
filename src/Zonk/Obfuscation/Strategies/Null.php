@@ -2,13 +2,13 @@
 
 namespace Zonk\Obfuscation\Strategies;
 
-class EmailAddress implements StrategyInterface
+class Null implements StrategyInterface
 {
     /**
      * @inheritdoc
      */
     public function obfuscate($value = null)
     {
-        return sprintf('%s@example.com', hash('sha256', $value));
+        return null;
     }
 }
