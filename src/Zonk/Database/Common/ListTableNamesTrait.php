@@ -4,7 +4,7 @@ namespace Zonk\Database\Common;
 
 use Zonk\Database\ConnectionProvider;
 
-trait ListTableNames
+trait ListTableNamesTrait
 {
     /**
      * @param ConnectionProvider $connectionProvider

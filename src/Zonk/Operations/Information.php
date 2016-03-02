@@ -4,12 +4,12 @@ namespace Zonk\Operations;
 
 use Psr\Log\LoggerInterface;
 use Zonk\Configuration;
-use Zonk\Database\Common\ListTableNames;
+use Zonk\Database\Common\ListTableNamesTrait;
 use Zonk\Database\ConnectionProvider;
 
 class Information implements OperationInterface
 {
-    use ListTableNames;
+    use ListTableNamesTrait;
 
     /** @var ConnectionProvider */
     protected $connectionProvider;

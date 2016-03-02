@@ -5,13 +5,13 @@ namespace Zonk\Operations;
 use Psr\Log\LoggerInterface;
 use Zonk\Configuration;
 use Zonk\Database\Common\DisabledForeignKeyConstraintsTrait;
-use Zonk\Database\Common\ListTableNames;
+use Zonk\Database\Common\ListTableNamesTrait;
 use Zonk\Database\ConnectionProvider;
 
 class Truncate implements OperationInterface
 {
     use DisabledForeignKeyConstraintsTrait;
-    use ListTableNames;
+    use ListTableNamesTrait;
 
     /** @var ConnectionProvider */
     protected $connectionProvider;
@@ -114,13 +114,13 @@ class Truncate implements OperationInterface
         $connection = $this->connectionProvider->getConnection();
 
         if (!in_array($tableName, $tables)) {
-            $this->logger->info(sprintf('No Table, Skipping %s', $tableName));
+            $this->logger->info(sprintf('No Table, Skipping `%s`', $tableName));
 
             return true;
         }
 
         $this->logger->info(sprintf('Truncating %s', $tableName));
-        $rs = $connection->query(sprintf('TRUNCATE TABLE %s', $tableName));
+        $rs = $connection->query(sprintf('TRUNCATE TABLE `%s`', $tableName));
 
         return true;
     }
