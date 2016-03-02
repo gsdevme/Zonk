@@ -65,6 +65,7 @@ class ZonkCommand extends Command
         foreach ($operations as $operation) {
             $this->logger->warning('Operation: '.$operation->getName().' Started');
             $operation->doOperation($configuration);
+            $this->logger->warning('Operation: '.$operation->getName().' Finished');
         }
 
         return 0;

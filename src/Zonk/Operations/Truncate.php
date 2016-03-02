@@ -5,7 +5,7 @@ namespace Zonk\Operations;
 use Psr\Log\LoggerInterface;
 use Zonk\Configuration;
 use Zonk\Database\CapsuleProvider;
-use Zonk\Database\DisabledForeignKeyConstraintsTrait;
+use Zonk\Database\Common\DisabledForeignKeyConstraintsTrait;
 
 class Truncate implements OperationInterface
 {
@@ -27,8 +27,6 @@ class Truncate implements OperationInterface
     {
         $this->capsuleProvider = $capsuleProvider;
         $this->logger = $logger;
-
-        $this->setCapsuleProvider($this->capsuleProvider);
     }
 
     public function getName()
@@ -54,6 +52,7 @@ class Truncate implements OperationInterface
         $tables = $connection->select('SHOW TABLES');
 
         $this->doDisabledForeignKeyConstraints(
+            $this->capsuleProvider,
             function () use ($operations, $tables) {
                 foreach ($operations['truncate'] as $table) {
                     if ($this->hasWildcard($table)) {
