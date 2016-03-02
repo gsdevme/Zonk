@@ -18,10 +18,10 @@ sudo mv zonk.phar /usr/local/bin/zonk
 ## Configuration
 ``` yml
 database:
-  # See Zonk\Database\CapsuleBuilder for a complete list
-  username: root
+  # See Zonk\Database\ConnectionBuilder for a complete list
+  user: root
   password: password
-  database: my_production_database
+  dbname: hunter
   host: 127.0.0.1
   
 operations: ~
