@@ -21,7 +21,7 @@ database:
   # See Zonk\Database\ConnectionBuilder for a complete list
   user: root
   password: password
-  dbname: hunter
+  dbname: my_production_database
   host: 127.0.0.1
   
 operations: ~
