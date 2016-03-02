@@ -4,6 +4,7 @@ namespace Zonk\Operations;
 
 use Psr\Log\LoggerInterface;
 use Zonk\Configuration;
+use Zonk\ConfigurationInterface;
 use Zonk\Database\Common\ChunkedQueryTrait;
 use Zonk\Database\Common\CountTableRowsTrait;
 use Zonk\Database\Common\ListTableNamesTrait;
@@ -49,11 +50,11 @@ class Obfuscate implements OperationInterface
     }
 
     /**
-     * @param Configuration $configuration
+     * @param ConfigurationInterface $configuration
      *
      * @return bool
      */
-    public function doOperation(Configuration $configuration)
+    public function doOperation(ConfigurationInterface $configuration)
     {
         $operations = $configuration->getConfigKey('operations');
 
@@ -120,7 +121,7 @@ class Obfuscate implements OperationInterface
                 unset($row);
                 unset($query);
             },
-            5000,
+            25000,
             0,
             function ($count) use ($tableName, $connection) {
                 $this->logger->info(sprintf('Table: %s, obfuscated %s rows', $tableName, number_format($count)));

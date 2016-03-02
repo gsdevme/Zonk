@@ -2,16 +2,14 @@
 
 namespace Zonk\Operations;
 
-use Zonk\Configuration;
+use Zonk\ConfigurationInterface;
 
 interface OperationInterface
 {
     /**
-     * @param Configuration $configuration
-     *
-     * @return bool
+     * @param ConfigurationInterface $configuration
      */
-    public function doOperation(Configuration $configuration);
+    public function doOperation(ConfigurationInterface $configuration);
 
     /**
      * @return string

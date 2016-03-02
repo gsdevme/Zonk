@@ -4,6 +4,7 @@ namespace Zonk\Operations;
 
 use Psr\Log\LoggerInterface;
 use Zonk\Configuration;
+use Zonk\ConfigurationInterface;
 use Zonk\Database\Common\DisabledForeignKeyConstraintsTrait;
 use Zonk\Database\Common\ListTableNamesTrait;
 use Zonk\Database\ConnectionProvider;
@@ -37,15 +38,16 @@ class Truncate implements OperationInterface
     }
 
     /**
-     * @param Configuration $configuration
+     * @param ConfigurationInterface $configuration
      *
      * @return bool
+     * @throws \Doctrine\DBAL\ConnectionException
      */
-    public function doOperation(Configuration $configuration)
+    public function doOperation(ConfigurationInterface $configuration)
     {
         $operations = $configuration->getConfigKey('operations');
 
-        if (!isset($operations['truncate'])) {
+        if (!isset($operations['truncate']) && !isset($operations['truncate']['tables'])) {
             return true;
         }
 
@@ -56,7 +58,7 @@ class Truncate implements OperationInterface
         $this->doDisabledForeignKeyConstraints(
             $this->connectionProvider,
             function () use ($operations, $tables) {
-                foreach ($operations['truncate'] as $table) {
+                foreach ($operations['truncate']['tables'] as $table) {
                     if ($this->hasWildcard($table)) {
                         $this->truncateTableWithWildcard($tables, $table);
                         continue;

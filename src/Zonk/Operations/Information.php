@@ -3,7 +3,7 @@
 namespace Zonk\Operations;
 
 use Psr\Log\LoggerInterface;
-use Zonk\Configuration;
+use Zonk\ConfigurationInterface;
 use Zonk\Database\Common\ListTableNamesTrait;
 use Zonk\Database\ConnectionProvider;
 
@@ -35,11 +35,9 @@ class Information implements OperationInterface
     }
 
     /**
-     * @param Configuration $configuration
-     *
-     * @return bool
+     * @param ConfigurationInterface $configuration
      */
-    public function doOperation(Configuration $configuration)
+    public function doOperation(ConfigurationInterface $configuration)
     {
         $database = $configuration->getConfigKey('database');
 

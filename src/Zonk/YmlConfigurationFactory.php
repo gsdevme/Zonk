@@ -7,46 +7,26 @@ use Symfony\Component\Yaml\Yaml;
 class YmlConfigurationFactory
 {
     /**
-     * @var array
-     */
-    private $requiredKeys;
-
-    /**
-     * YmlConfigurationFactory constructor.
-     */
-    public function __construct()
-    {
-        $this->requiredKeys = [
-            'database' => [
-                'username',
-            ],
-        ];
-    }
-
-    /**
-     * @param $filePath
+     * @param      $filePath
+     * @param bool $singleTable
      *
      * @return Configuration
      */
-    public function createFromYml($filePath)
+    public function createFromYml($filePath, $singleTable = false)
     {
         if (!is_file($filePath)) {
             throw new \RuntimeException(sprintf('%s does not appear to exist', $filePath));
         }
 
         $config = Yaml::parse(file_get_contents($filePath));
-        $this->validate($config);
 
-        $configuration = new Configuration($config);
+        if ($singleTable !== false) {
+            $configuration = new SingleTableConfiguration($config, $singleTable);
+        } else {
+            $configuration = new Configuration($config);
+        }
+
 
         return $configuration;
-    }
-
-    /**
-     * @TODO
-     */
-    private function validate($config)
-    {
-        return true;
     }
 }

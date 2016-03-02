@@ -2,7 +2,7 @@
 
 namespace Zonk;
 
-class Configuration
+class Configuration implements ConfigurationInterface
 {
     private $config;
 
@@ -18,9 +18,7 @@ class Configuration
     }
 
     /**
-     * @param $key
-     *
-     * @return null|mixed
+     * @inheritdoc
      */
     public function getConfigKey($key)
     {
@@ -32,9 +30,7 @@ class Configuration
     }
 
     /**
-     * @param $key
-     *
-     * @return bool
+     * @inheritdoc
      */
     public function hasConfigKey($key)
     {

@@ -31,6 +31,10 @@ trait ChunkedQueryTrait
             ->setFirstResult($offset)
             ->execute();
 
+        if ($rows->rowCount()) {
+            return;
+        }
+
         foreach ($rows as $row) {
             call_user_func_array($callable, [$row, $queryBuilder->getConnection()]);
         }

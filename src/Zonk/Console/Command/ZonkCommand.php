@@ -21,7 +21,7 @@ use Zonk\YmlConfigurationFactory;
 
 class ZonkCommand extends Command
 {
-    const NAME                = 'zonk';
+    const NAME = 'zonk';
     const DEFAULT_CONFIG_FILE = '/etc/zonk/zonk.yml';
 
     /** @var LoggerInterface */
@@ -41,7 +41,19 @@ class ZonkCommand extends Command
             'Configuration file path',
             self::DEFAULT_CONFIG_FILE
         );
-        $this->addOption('output-file', 'o', InputOption::VALUE_REQUIRED, 'Output file', realpath(getcwd()).'zonked');
+        $this->addOption(
+            'table',
+            't',
+            InputOption::VALUE_REQUIRED,
+            'Run only this table',
+            false
+        );
+        $this->addOption(
+            'process-per-table',
+            'fork',
+            InputOption::VALUE_NONE,
+            'Fork each table into its own process'
+        );
     }
 
     /**
@@ -52,10 +64,17 @@ class ZonkCommand extends Command
         $this->doBanner($output);
 
         $ymlConfigurationFactory = new YmlConfigurationFactory();
-        $configuration = $ymlConfigurationFactory->createFromYml($input->getOption('config-file'));
+        $configuration = $ymlConfigurationFactory->createFromYml(
+            $input->getOption('config-file'),
+            $input->getOption('table')
+        );
 
         $connection = (new ConnectionBuilder())->build($configuration);
         $connectionProvider = new ConnectionProvider($connection);
+
+        if ($input->hasOption('fork')) {
+
+        }
 
         $logger = $this->getLogger($output);
 
@@ -114,4 +133,6 @@ BANNER;
         $output->write('<info>'.$banner.'</info>');
 
     }
+
+    private function
 }

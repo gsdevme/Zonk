@@ -3,17 +3,17 @@
 namespace Zonk\Database;
 
 use Doctrine\DBAL\DriverManager;
-use Zonk\Configuration;
+use Zonk\ConfigurationInterface;
 
 class ConnectionBuilder
 {
     /**
-     * @param Configuration $configuration
+     * @param ConfigurationInterface $configuration
      *
      * @return \Doctrine\DBAL\Connection
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function build(Configuration $configuration)
+    public function build(ConfigurationInterface $configuration)
     {
         if (!$configuration->hasConfigKey('database')) {
             throw new \RuntimeException(sprintf('No database configuration'));
