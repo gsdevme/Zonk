@@ -8,6 +8,13 @@ A single purpose tool for cleaning MySQL databases for use outside of production
 - Support https://github.com/fzaninotto/Faker
 - Tests?
 
+## Installing
+``` bash
+wget https://github.com/gsdevme/Zonk/releases/download/0.1.0-Alpha1/zonk.phar
+chmod +x zonk.phar
+sudo mv zonk.phar /usr/local/bin/zonk
+```
+
 ## Configuration
 ``` yml
 database:
