@@ -10,7 +10,7 @@ A single purpose tool for cleaning MySQL databases for use outside of production
 
 ## Installing
 ``` bash
-wget https://github.com/gsdevme/Zonk/releases/download/0.1.0-Alpha1/zonk.phar
+wget https://github.com/gsdevme/Zonk/releases/download/0.1.0-Alpha2/zonk.phar
 chmod +x zonk.phar
 sudo mv zonk.phar /usr/local/bin/zonk
 ```
