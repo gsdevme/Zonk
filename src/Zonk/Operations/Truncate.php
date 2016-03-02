@@ -2,19 +2,20 @@
 
 namespace Zonk\Operations;
 
+use Doctrine\DBAL\Connection;
 use Psr\Log\LoggerInterface;
 use Zonk\Configuration;
-use Zonk\Database\CapsuleProvider;
 use Zonk\Database\Common\DisabledForeignKeyConstraintsTrait;
-use Zonk\Database\Common\ShowTablesTrait;
+use Zonk\Database\Common\ListTableNames;
+use Zonk\Database\ConnectionProvider;
 
 class Truncate implements OperationInterface
 {
     use DisabledForeignKeyConstraintsTrait;
-    use ShowTablesTrait;
+    use ListTableNames;
 
-    /** @var CapsuleProvider */
-    protected $capsuleProvider;
+    /** @var ConnectionProvider */
+    protected $connectionProvider;
 
     /** @var LoggerInterface */
     private $logger;
@@ -22,12 +23,12 @@ class Truncate implements OperationInterface
     /**
      * Truncate constructor.
      *
-     * @param CapsuleProvider $capsuleProvider
-     * @param LoggerInterface $logger
+     * @param ConnectionProvider $connectionProvider
+     * @param LoggerInterface    $logger
      */
-    public function __construct(CapsuleProvider $capsuleProvider, LoggerInterface $logger)
+    public function __construct(ConnectionProvider $connectionProvider, LoggerInterface $logger)
     {
-        $this->capsuleProvider = $capsuleProvider;
+        $this->connectionProvider = $connectionProvider;
         $this->logger = $logger;
     }
 
@@ -44,17 +45,17 @@ class Truncate implements OperationInterface
     public function doOperation(Configuration $configuration)
     {
         $operations = $configuration->getConfigKey('operations');
-        $capsule = $this->capsuleProvider->getCapsule();
-        $connection = $capsule->getConnection();
 
         if (!isset($operations['truncate'])) {
             return true;
         }
 
-        $tables = $this->getShowTables($this->capsuleProvider);
+        $tables = $this->getListTableNames($this->connectionProvider);
+
+        $this->connectionProvider->getConnection()->beginTransaction();
 
         $this->doDisabledForeignKeyConstraints(
-            $this->capsuleProvider,
+            $this->connectionProvider,
             function () use ($operations, $tables) {
                 foreach ($operations['truncate'] as $table) {
                     if ($this->hasWildcard($table)) {
@@ -62,10 +63,12 @@ class Truncate implements OperationInterface
                         continue;
                     }
 
-                    $this->truncateTable($table);
+                    $this->truncateTable($table, $tables);
                 }
             }
         );
+
+        $this->connectionProvider->getConnection()->commit();
 
         return true;
     }
@@ -94,7 +97,7 @@ class Truncate implements OperationInterface
 
             foreach ($tables as $tableName) {
                 if (strstr($tableName, $wildcardTable) !== false) {
-                    $this->truncateTable(strstr($tableName, $wildcardTable));
+                    $this->truncateTable(strstr($tableName, $wildcardTable), $tables);
                 }
             }
 
@@ -102,22 +105,23 @@ class Truncate implements OperationInterface
     }
 
     /**
-     * @param $tableName
+     * @param       $tableName
+     * @param array $tables
      *
-     * @return null
+     * @return bool
      */
-    private function truncateTable($tableName)
+    private function truncateTable($tableName, array $tables)
     {
-        $capsule = $this->capsuleProvider->getCapsule();
+        $connection = $this->connectionProvider->getConnection();
 
-        if (!$capsule->schema()->hasTable($tableName)) {
+        if (!in_array($tableName, $tables)) {
             $this->logger->info(sprintf('No Table, Skipping %s', $tableName));
 
             return true;
         }
 
         $this->logger->info(sprintf('Truncating %s', $tableName));
-        $capsule->table($tableName)->truncate();
+        $rs = $connection->query(sprintf('TRUNCATE TABLE %s', $tableName));
 
         return true;
     }

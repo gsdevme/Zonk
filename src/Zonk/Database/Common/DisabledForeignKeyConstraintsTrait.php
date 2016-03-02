@@ -2,21 +2,22 @@
 
 namespace Zonk\Database\Common;
 
-use Zonk\Database\CapsuleProvider;
+use Zonk\Database\ConnectionProvider;
 
 trait DisabledForeignKeyConstraintsTrait
 {
     /**
-     * @param CapsuleProvider $capsuleProvider
-     * @param callable        $callable
+     * @param ConnectionProvider $connectionProvider
+     * @param callable           $callable
+     *
+     * @throws \Doctrine\DBAL\DBALException
      */
-    public function doDisabledForeignKeyConstraints(CapsuleProvider $capsuleProvider, callable $callable)
+    public function doDisabledForeignKeyConstraints(ConnectionProvider $connectionProvider, callable $callable)
     {
-        $capsule = $capsuleProvider->getCapsule();
-        $connection = $capsule->getConnection();
+        $connection = $connectionProvider->getConnection();
 
-        $connection->statement('SET foreign_key_checks=0');
+        $connection->executeQuery('SET foreign_key_checks=0');
         $callable();
-        $connection->statement('SET foreign_key_checks=1');
+        $connection->executeQuery('SET foreign_key_checks=1');
     }
 }

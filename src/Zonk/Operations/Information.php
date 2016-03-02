@@ -4,28 +4,28 @@ namespace Zonk\Operations;
 
 use Psr\Log\LoggerInterface;
 use Zonk\Configuration;
-use Zonk\Database\CapsuleProvider;
-use Zonk\Database\Common\ShowTablesTrait;
+use Zonk\Database\Common\ListTableNames;
+use Zonk\Database\ConnectionProvider;
 
 class Information implements OperationInterface
 {
-    use ShowTablesTrait;
+    use ListTableNames;
 
-    /** @var CapsuleProvider */
-    protected $capsuleProvider;
+    /** @var ConnectionProvider */
+    protected $connectionProvider;
 
     /** @var LoggerInterface */
     private $logger;
 
     /**
-     * Truncate constructor.
+     * Information constructor.
      *
-     * @param CapsuleProvider $capsuleProvider
-     * @param LoggerInterface $logger
+     * @param ConnectionProvider $connectionProvider
+     * @param LoggerInterface    $logger
      */
-    public function __construct(CapsuleProvider $capsuleProvider, LoggerInterface $logger)
+    public function __construct(ConnectionProvider $connectionProvider, LoggerInterface $logger)
     {
-        $this->capsuleProvider = $capsuleProvider;
+        $this->connectionProvider = $connectionProvider;
         $this->logger = $logger;
     }
 
@@ -43,9 +43,9 @@ class Information implements OperationInterface
     {
         $database = $configuration->getConfigKey('database');
 
-        $tables = $this->getShowTables($this->capsuleProvider);
+        $tables = $this->getListTableNames($this->connectionProvider);
 
-        $this->logger->warning(sprintf('Zonk Performing Opertations on %s', $database['database']));
+        $this->logger->warning(sprintf('Zonk Performing Opertations on %s', $database['dbname']));
         $this->logger->info(sprintf('Number of tables: %d', count($tables)));
     }
 }

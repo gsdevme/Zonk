@@ -10,6 +10,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Zonk\Database\CapsuleBuilder;
 use Zonk\Database\CapsuleProvider;
+use Zonk\Database\ConnectionBuilder;
+use Zonk\Database\ConnectionProvider;
 use Zonk\Monolog\OutputHandler;
 use Zonk\Operations\Information;
 use Zonk\Operations\Obfuscate;
@@ -52,15 +54,15 @@ class ZonkCommand extends Command
         $ymlConfigurationFactory = new YmlConfigurationFactory();
         $configuration = $ymlConfigurationFactory->createFromYml($input->getOption('config-file'));
 
-        $capsule = (new CapsuleBuilder())->build($configuration);
-        $capsuleProvider = new CapsuleProvider($capsule);
+        $connection = (new ConnectionBuilder())->build($configuration);
+        $connectionProvider = new ConnectionProvider($connection);
 
         $logger = $this->getLogger($output);
 
         $operations = [
-            new Information($capsuleProvider, $logger),
-            new Truncate($capsuleProvider, $logger),
-           // new Obfuscate($capsuleProvider, $logger),
+            new Information($connectionProvider, $logger),
+            new Truncate($connectionProvider, $logger),
+            new Obfuscate($connectionProvider, $logger),
         ];
 
         /** @var OperationInterface $operation */
