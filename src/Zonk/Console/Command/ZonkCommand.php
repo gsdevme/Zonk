@@ -57,6 +57,7 @@ class ZonkCommand extends Command
         $logger = $this->getLogger($output);
 
         $operations = [
+            new Information($capsuleProvider, $logger),
             new Truncate($capsuleProvider, $logger),
         ];
 
