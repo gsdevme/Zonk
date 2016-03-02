@@ -1,0 +1,15 @@
+{
+  "chmod": "0755",
+  "directories": [
+    "src"
+  ],
+  "finder": [
+    {
+      "name": "*.php",
+      "in": "vendor"
+    }
+  ],
+  "main": "bin/zonk",
+  "output": "zonk.phar",
+  "stub": true
+}
