@@ -18,8 +18,8 @@ class YmlConfigurationFactory
     {
         $this->requiredKeys = [
             'database' => [
-                'username'
-            ]
+                'username',
+            ],
         ];
     }
 

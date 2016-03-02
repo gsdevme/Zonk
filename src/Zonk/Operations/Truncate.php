@@ -2,7 +2,6 @@
 
 namespace Zonk\Operations;
 
-use Doctrine\DBAL\Connection;
 use Psr\Log\LoggerInterface;
 use Zonk\Configuration;
 use Zonk\Database\Common\DisabledForeignKeyConstraintsTrait;

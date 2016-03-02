@@ -2,8 +2,8 @@
 
 namespace Zonk\Database;
 
-use Zonk\Configuration;
 use Doctrine\DBAL\DriverManager;
+use Zonk\Configuration;
 
 class ConnectionBuilder
 {
@@ -22,13 +22,16 @@ class ConnectionBuilder
         $config = new \Doctrine\DBAL\Configuration();
         $config->setAutoCommit(false);
 
-        $params = array_merge([
-            'dbname'   => 'database',
-            'user'     => 'root',
-            'password' => 'root',
-            'host'     => '127.0.0.1',
-            'driver'   => 'pdo_mysql',
-        ], $configuration->getConfigKey('database'));
+        $params = array_merge(
+            [
+                'dbname'   => 'database',
+                'user'     => 'root',
+                'password' => 'root',
+                'host'     => '127.0.0.1',
+                'driver'   => 'pdo_mysql',
+            ],
+            $configuration->getConfigKey('database')
+        );
 
         $conn = DriverManager::getConnection($params, $config);
 

@@ -21,7 +21,7 @@ use Zonk\YmlConfigurationFactory;
 
 class ZonkCommand extends Command
 {
-    const NAME = 'zonk';
+    const NAME                = 'zonk';
     const DEFAULT_CONFIG_FILE = '/etc/zonk/zonk.yml';
 
     /** @var LoggerInterface */
@@ -111,7 +111,7 @@ Zonk! - Version: $version
 
 BANNER;
 
-        $output->write('<info>' . $banner. '</info>');
+        $output->write('<info>'.$banner.'</info>');
 
     }
 }

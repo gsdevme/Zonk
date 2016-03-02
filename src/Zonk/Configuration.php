@@ -8,10 +8,13 @@ class Configuration
 
     public function __construct($config)
     {
-        $this->config = array_merge([
-            'operations' => [],
-            'database' => []
-        ], $config);
+        $this->config = array_merge(
+            [
+                'operations' => [],
+                'database'   => [],
+            ],
+            $config
+        );
     }
 
     /**
