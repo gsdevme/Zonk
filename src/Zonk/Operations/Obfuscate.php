@@ -3,7 +3,6 @@
 namespace Zonk\Operations;
 
 use Psr\Log\LoggerInterface;
-use Zonk\Configuration;
 use Zonk\ConfigurationInterface;
 use Zonk\Database\Common\ChunkedQueryTrait;
 use Zonk\Database\Common\CountTableRowsTrait;

@@ -31,7 +31,7 @@ trait ChunkedQueryTrait
             ->setFirstResult($offset)
             ->execute();
 
-        if ($rows->rowCount()) {
+        if ($rows->rowCount() <= 0) {
             return;
         }
 
