@@ -4,8 +4,8 @@ A single purpose tool for cleaning MySQL databases for use outside of production
 ## Todo
 - ~~Truncate Support~~
 - ~~Wildcard Table Truncate~~
-- Obfuscation of fields within tables
-- Support https://github.com/fzaninotto/Faker
+- ~~Obfuscation of fields within tables~~
+- ~~Support https://github.com/fzaninotto/Faker~~
 - Tests?
 
 ## Installing
@@ -31,16 +31,20 @@ operations: ~
 Zonk has multiple operations it can perform, none are required by default.
 
 ### Obfuscate
-Obfuscate
+Obfuscate will use the current value within the database to create a new value. Since performance could be a problem a very fast hash is used `md5` therefore we randomly salt the value to provide extra security in terms of reserve engineering the original value. 
+
+`FakerAwareStrategy` will use a https://github.com/fzaninotto/faker to construct a new value, this however can have downfalls, for example if you have a large dataset you may get dupicates, also the original value is lost which could have an impact if you have data copied around the database in a flat file setup. 
 
 ``` yml
   obfuscate:
     strategies:
       email: Zonk\Obfuscation\Strategies\EmailAddress
+      string: Zonk\Obfuscation\Strategies\BasicString
     tables:
       customer:
         username: email
         email: email
+        name: string
 ```
 
 ### Truncate
@@ -58,5 +62,5 @@ operations:
 
 - Symfony/console
 - Symfony/ymal
-- illuminate/database
+- doctrine/doctrine-dbal
 - monolog/monolog
