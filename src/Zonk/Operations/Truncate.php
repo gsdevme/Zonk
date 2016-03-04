@@ -3,7 +3,6 @@
 namespace Zonk\Operations;
 
 use Psr\Log\LoggerInterface;
-use Zonk\Configuration;
 use Zonk\ConfigurationInterface;
 use Zonk\Database\Common\DisabledForeignKeyConstraintsTrait;
 use Zonk\Database\Common\ListTableNamesTrait;

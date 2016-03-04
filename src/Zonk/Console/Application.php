@@ -9,14 +9,19 @@ use Zonk\Console\Command\ZonkCommand;
 
 class Application extends SymfonyApplication
 {
+    /** @var string */
+    private $binary;
+
     /**
      * Application constructor.
      *
      * @param string $version
      */
-    public function __construct($version)
+    public function __construct($version, $binary)
     {
         parent::__construct('Zonk', $version);
+
+        $this->binary = $binary;
     }
 
     /**
@@ -47,5 +52,13 @@ class Application extends SymfonyApplication
         $inputDefinition->setArguments();
 
         return $inputDefinition;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBinary()
+    {
+        return $this->binary;
     }
 }

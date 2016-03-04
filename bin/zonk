@@ -22,5 +22,5 @@ if (is_file($autoload = __DIR__ . '/../vendor/autoload.php')) {
     exit(1);
 }
 
-$app = new Zonk\Console\Application(VERSION);
+$app = new Zonk\Console\Application(VERSION, realpath(__FILE__));
 $app->run();

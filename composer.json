@@ -5,7 +5,8 @@
         "symfony/yaml": "^3.0",
         "monolog/monolog": "^1.18",
         "fzaninotto/faker": "^1.5",
-        "doctrine/dbal": "^2.5"
+        "doctrine/dbal": "^2.5",
+        "symfony/process": "^3.0"
     },
     "autoload": {
         "psr-0": {

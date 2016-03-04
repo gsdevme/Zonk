@@ -8,12 +8,12 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Zonk\Database\CapsuleBuilder;
-use Zonk\Database\CapsuleProvider;
+use Symfony\Component\Process\Process;
+use Zonk\Console\Application;
+use Zonk\Database\Common\ListTableNamesTrait;
 use Zonk\Database\ConnectionBuilder;
 use Zonk\Database\ConnectionProvider;
 use Zonk\Monolog\OutputHandler;
-use Zonk\Operations\Information;
 use Zonk\Operations\Obfuscate;
 use Zonk\Operations\OperationInterface;
 use Zonk\Operations\Truncate;
@@ -21,7 +21,9 @@ use Zonk\YmlConfigurationFactory;
 
 class ZonkCommand extends Command
 {
-    const NAME = 'zonk';
+    use ListTableNamesTrait;
+
+    const NAME                = 'zonk';
     const DEFAULT_CONFIG_FILE = '/etc/zonk/zonk.yml';
 
     /** @var LoggerInterface */
@@ -50,7 +52,7 @@ class ZonkCommand extends Command
         );
         $this->addOption(
             'process-per-table',
-            'fork',
+            'f',
             InputOption::VALUE_NONE,
             'Fork each table into its own process'
         );
@@ -61,8 +63,6 @@ class ZonkCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->doBanner($output);
-
         $ymlConfigurationFactory = new YmlConfigurationFactory();
         $configuration = $ymlConfigurationFactory->createFromYml(
             $input->getOption('config-file'),
@@ -72,23 +72,25 @@ class ZonkCommand extends Command
         $connection = (new ConnectionBuilder())->build($configuration);
         $connectionProvider = new ConnectionProvider($connection);
 
-        if ($input->hasOption('fork')) {
+        if ($input->getOption('process-per-table')) {
+            $this->fork($connectionProvider, $input->getOption('config-file'));
 
+            return;
         }
 
+        //$this->doBanner($output);
         $logger = $this->getLogger($output);
 
         $operations = [
-            new Information($connectionProvider, $logger),
             new Truncate($connectionProvider, $logger),
             new Obfuscate($connectionProvider, $logger),
         ];
 
         /** @var OperationInterface $operation */
         foreach ($operations as $operation) {
-            $this->logger->warning('Operation: '.$operation->getName().' Started');
+            //$this->logger->warning('Operation: '.$operation->getName().' Started');
             $operation->doOperation($configuration);
-            $this->logger->warning('Operation: '.$operation->getName().' Finished');
+            //$this->logger->warning('Operation: '.$operation->getName().' Finished');
         }
 
         return 0;
@@ -108,9 +110,7 @@ class ZonkCommand extends Command
         $outputHandler = new OutputHandler();
         $outputHandler->setOutput($output);
 
-        $logger = new Logger('default');
-        $logger->setHandlers([$outputHandler]);
-
+        $logger = new Logger('default', [$outputHandler]);
         $this->logger = $logger;
 
         return $this->logger;
@@ -134,5 +134,52 @@ BANNER;
 
     }
 
-    private function
+    /**
+     * @param ConnectionProvider $connectionProvider
+     * @param                    $configFile
+     */
+    private function fork(ConnectionProvider $connectionProvider, $configFile)
+    {
+        $config = $configFile;
+        $queue = [];
+        $running = [];
+        $tables = $this->getListTableNames($connectionProvider);
+
+        /** @var Application $application */
+        $application = $this->getApplication();
+
+        foreach ($tables as $table) {
+            $command = sprintf('%s -t %s -c %s', $application->getBinary(), $table, $config);
+            $process = new Process($command);
+            $queue[] = $process;
+        }
+
+        /** @var Process $process */
+        do {
+
+            echo count($queue);
+            foreach ($queue as &$process) {
+                if (count($running) < 5) {
+                    $running[] = $process;
+                    $process->start();
+                    unset($process);
+                }
+            }
+
+            echo count($queue);
+            die;
+
+            foreach ($running as &$process) {
+                echo $process->getOutput();
+
+                if (!$process->isRunning()) {
+                    unset($process);
+                }
+            }
+
+
+            usleep(50000);
+        } while (count($running) > 0);
+
+    }
 }

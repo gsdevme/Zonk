@@ -4,6 +4,7 @@ namespace Zonk\Obfuscation;
 
 use Faker\Factory;
 use Zonk\Obfuscation\Strategies\FakerAwareStrategy;
+use Zonk\Obfuscation\Strategies\SaltAwareStrategy;
 use Zonk\Obfuscation\Strategies\StrategyInterface;
 
 class StrategyRegistry
@@ -12,13 +13,15 @@ class StrategyRegistry
 
     private $generator;
 
+    private $salt;
+
     /**
      * StrategyProvider constructor.
      */
     public function __construct()
     {
         $this->registry = [];
-        $this->generator = Factory::create();
+        $this->salt = md5(uniqid());
     }
 
     /**
@@ -34,7 +37,11 @@ class StrategyRegistry
         }
 
         if ($instance instanceof FakerAwareStrategy) {
-            $instance->setFakerGenerator($this->generator);
+            $instance->setFakerGenerator($this->getGenerator());
+        }
+
+        if ($instance instanceof SaltAwareStrategy) {
+            $instance->setSalt($this->salt);
         }
 
         $this->registry[$key] = $instance;
@@ -52,5 +59,17 @@ class StrategyRegistry
         }
 
         return $this->registry[$key];
+    }
+
+    /**
+     * @return \Faker\Generator
+     */
+    public function getGenerator()
+    {
+        if ($this->generator === null) {
+            $this->generator = Factory::create();
+        }
+
+        return $this->generator;
     }
 }

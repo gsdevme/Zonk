@@ -2,13 +2,13 @@
 
 namespace Zonk\Obfuscation\Strategies;
 
-class FirstName extends FakerAwareStrategy
+class BasicString extends SaltAwareStrategy
 {
     /**
      * @inheritdoc
      */
     public function obfuscate($value = null)
     {
-        return md5($value);
+        return md5(sprintf('%s-%s', $this->salt, $value));
     }
 }
