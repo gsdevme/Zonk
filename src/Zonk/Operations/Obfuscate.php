@@ -120,7 +120,7 @@ class Obfuscate implements OperationInterface
                 unset($row);
                 unset($query);
             },
-            25000,
+            5000,
             0,
             function ($count) use ($tableName, $connection) {
                 $this->logger->info(sprintf('Table: %s, obfuscated %s rows', $tableName, number_format($count)));
