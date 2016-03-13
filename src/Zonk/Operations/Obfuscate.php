@@ -73,7 +73,7 @@ class Obfuscate implements OperationInterface
                 continue;
             }
 
-            $this->logger->info(sprintf('Obfuscating table `%s`', $tableName));
+            $this->logger->warning(sprintf('Obfuscating table `%s`', $tableName));
 
             $rows = $this->getTableRows($this->connectionProvider, $tableName);
             $this->logger->info(sprintf('Table: `%s` has %d rows', $tableName, $rows));

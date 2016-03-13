@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+ZONK="$DIR/zonk"
+CONFIG=""
+
+while getopts ':c' flag; do
+  case "${flag}" in
+    c) CONFIG="-c ${OPTARG}" ;;
+  esac
+done
+
+echo $CONFIG
+
+$ZONK

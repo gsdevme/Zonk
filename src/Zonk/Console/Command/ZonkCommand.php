@@ -51,10 +51,10 @@ class ZonkCommand extends Command
             false
         );
         $this->addOption(
-            'process-per-table',
-            'f',
+            'list-tables',
+            'l',
             InputOption::VALUE_NONE,
-            'Fork each table into its own process'
+            'List each table'
         );
     }
 
@@ -72,13 +72,12 @@ class ZonkCommand extends Command
         $connection = (new ConnectionBuilder())->build($configuration);
         $connectionProvider = new ConnectionProvider($connection);
 
-        if ($input->getOption('process-per-table')) {
-            $this->fork($connectionProvider, $input->getOption('config-file'));
+        if ($input->getOption('list-tables')) {
+            $commands = $this->listTableCommands($connectionProvider, $input->getOption('config-file'));
 
-            return;
+            return $output->write(implode(PHP_EOL, $commands));
         }
 
-        //$this->doBanner($output);
         $logger = $this->getLogger($output);
 
         $operations = [
@@ -88,9 +87,15 @@ class ZonkCommand extends Command
 
         /** @var OperationInterface $operation */
         foreach ($operations as $operation) {
-            //$this->logger->warning('Operation: '.$operation->getName().' Started');
+            if (!$input->getOption('table')) {
+                $this->logger->warning('Operation: '.$operation->getName().' Started');
+            }
+
             $operation->doOperation($configuration);
-            //$this->logger->warning('Operation: '.$operation->getName().' Finished');
+
+            if (!$input->getOption('table')) {
+                $this->logger->warning('Operation: '.$operation->getName().' Finished');
+            }
         }
 
         return 0;
@@ -117,69 +122,22 @@ class ZonkCommand extends Command
     }
 
     /**
-     * @param OutputInterface $output
-     */
-    private function doBanner(OutputInterface $output)
-    {
-        $version = $this->getApplication()->getVersion();
-
-        $banner = <<<BANNER
-========================
-Zonk! - Version: $version
-=========================
-
-BANNER;
-
-        $output->write('<info>'.$banner.'</info>');
-
-    }
-
-    /**
      * @param ConnectionProvider $connectionProvider
      * @param                    $configFile
      */
-    private function fork(ConnectionProvider $connectionProvider, $configFile)
+    private function listTableCommands(ConnectionProvider $connectionProvider, $configFile)
     {
         $config = $configFile;
-        $queue = [];
-        $running = [];
         $tables = $this->getListTableNames($connectionProvider);
+        $commands = [];
 
         /** @var Application $application */
         $application = $this->getApplication();
 
         foreach ($tables as $table) {
-            $command = sprintf('%s -t %s -c %s', $application->getBinary(), $table, $config);
-            $process = new Process($command);
-            $queue[] = $process;
+            $commands[] = sprintf('%s -t %s -c %s', $application->getBinary(), $table, $config);
         }
 
-        /** @var Process $process */
-        do {
-
-            echo count($queue);
-            foreach ($queue as &$process) {
-                if (count($running) < 5) {
-                    $running[] = $process;
-                    $process->start();
-                    unset($process);
-                }
-            }
-
-            echo count($queue);
-            die;
-
-            foreach ($running as &$process) {
-                echo $process->getOutput();
-
-                if (!$process->isRunning()) {
-                    unset($process);
-                }
-            }
-
-
-            usleep(50000);
-        } while (count($running) > 0);
-
+        return $commands;
     }
 }
