@@ -14,6 +14,7 @@ use Zonk\Database\Common\ListTableNamesTrait;
 use Zonk\Database\ConnectionBuilder;
 use Zonk\Database\ConnectionProvider;
 use Zonk\Monolog\OutputHandler;
+use Zonk\Operations\Delete;
 use Zonk\Operations\Obfuscate;
 use Zonk\Operations\OperationInterface;
 use Zonk\Operations\Truncate;
@@ -83,6 +84,7 @@ class ZonkCommand extends Command
 
         $operations = [
             new Truncate($connectionProvider, $logger),
+            new Delete($connectionProvider, $logger),
             new Obfuscate($connectionProvider, $logger),
         ];
 

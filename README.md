@@ -58,6 +58,16 @@ operations:
     - users_*
 ```
 
+### Delete
+Delete will delete all where the condition is met
+
+``` yml
+operations:
+  delete:
+    tables:
+      customer: 'customerId <> 1'
+```
+
 ## Packages Used
 
 - Symfony/console
